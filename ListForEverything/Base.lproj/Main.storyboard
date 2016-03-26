@@ -33,7 +33,7 @@
                                         </connections>
                                     </textField>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="CZO-jc-Sbv">
-                                        <rect key="frame" x="0.0" y="30" width="560" height="487"/>
+                                        <rect key="frame" x="0.0" y="30" width="560" height="467"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <prototypes>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ListItemCell" id="NaE-a6-1dk" customClass="ListItemTableViewCell" customModule="ListForEverything" customModuleProvider="target">
@@ -64,12 +64,15 @@
                                         </prototypes>
                                     </tableView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jyH-tW-vII">
-                                        <rect key="frame" x="0.0" y="517" width="560" height="30"/>
+                                        <rect key="frame" x="0.0" y="497" width="560" height="50"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="30" id="oDa-5d-6GM"/>
-                                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="30" id="vlE-FC-Swh"/>
+                                            <constraint firstAttribute="height" constant="50" id="oDa-5d-6GM"/>
                                         </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="22"/>
                                         <state key="normal" title="Clear completed items"/>
+                                        <connections>
+                                            <action selector="clearCompletedItems:" destination="BYZ-38-t0r" eventType="touchUpInside" id="gPt-Wx-RCf"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <constraints>

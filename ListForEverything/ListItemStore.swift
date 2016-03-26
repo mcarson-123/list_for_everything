@@ -30,6 +30,14 @@ class ListItemStore {
         }
     }
     
+    func deleteCompletedItems() {
+        for item in allListItems {
+            if item.completed == true {
+                deleteListItem(item)
+            }
+        }
+    }
+    
     func saveChanges() -> Bool {
         return NSKeyedArchiver.archiveRootObject(allListItems, toFile: listItemArchiveURL.path!)
     }

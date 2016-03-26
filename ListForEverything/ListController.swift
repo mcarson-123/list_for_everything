@@ -20,6 +20,11 @@ class ListController: UIViewController, UITableViewDataSource, UITableViewDelega
         view.addGestureRecognizer(tap)
     }
     
+    @IBAction func clearCompletedItems(sender: UIButton) {
+        listItemsStore.deleteCompletedItems()
+        tableView.reloadData()
+    }
+    
     func dismissKeyboard() {
         view.endEditing(true)
     }
