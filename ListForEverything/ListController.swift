@@ -6,6 +6,7 @@ class ListController: UIViewController, UITableViewDataSource, UITableViewDelega
     @IBOutlet weak var textField: UITextField!
     
     var listItemsStore: ListItemStore!
+    var indexPathToMove: NSIndexPath?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,6 +19,9 @@ class ListController: UIViewController, UITableViewDataSource, UITableViewDelega
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(ListController.dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
+        
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(ListController.reorderTable(_:)))
+        tableView.addGestureRecognizer(longPress)
     }
     
     @IBAction func clearCompletedItems(sender: UIButton) {
@@ -39,6 +43,44 @@ class ListController: UIViewController, UITableViewDataSource, UITableViewDelega
         
         textField.becomeFirstResponder()
         return true
+    }
+    
+    func reorderTable(gestureRecognizer: UIGestureRecognizer) {
+        let longPress = gestureRecognizer as! UILongPressGestureRecognizer
+        let location = longPress.locationInView(tableView)
+        let indexPath = tableView.indexPathForRowAtPoint(location)
+        
+        
+        switch longPress.state {
+        case .Began:
+            // set item to reorder
+            if indexPath == nil {
+                return
+            }
+            
+            let cell = tableView.cellForRowAtIndexPath(indexPath!)
+            cell?.backgroundColor = UIColor(red: 225/255, green: 225/255, blue: 225/255, alpha: 1)
+            indexPathToMove = indexPath!
+            break
+        case .Changed:
+            if indexPath == nil || indexPathToMove == nil || indexPathToMove == indexPath! {
+                return
+            }
+            
+            // Move item with pretty animations in the table
+            tableView.moveRowAtIndexPath(indexPathToMove!, toIndexPath: indexPath!)
+            // Ensure order will be persisted
+            swap(&listItemsStore.allListItems[indexPathToMove!.row], &listItemsStore.allListItems[indexPath!.row])
+            
+            indexPathToMove = indexPath!
+            break
+        case .Ended:
+            let cell = tableView.cellForRowAtIndexPath(indexPathToMove!)
+            cell?.backgroundColor = UIColor.whiteColor()
+            break
+        default:
+            break
+        }
     }
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -70,6 +112,7 @@ class ListController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
         
         cell.textLabel?.attributedText = attributeString
+        cell.selectionStyle = .None
         return cell
     }
     
