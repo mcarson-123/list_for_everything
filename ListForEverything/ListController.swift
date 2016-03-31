@@ -5,11 +5,13 @@ class ListController: UIViewController, UITableViewDataSource, UITableViewDelega
     @IBOutlet var tableView: UITableView!
     @IBOutlet weak var textField: UITextField!
     
-    var listItemsStore: ListItemStore!
+    var list: List!
+    var listStore: ListStore!
     var indexPathToMove: NSIndexPath?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationItem.title = list.name
         
         textField.becomeFirstResponder()
         
@@ -25,7 +27,7 @@ class ListController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     @IBAction func clearCompletedItems(sender: UIButton) {
-        listItemsStore.deleteCompletedItems()
+        listStore.deleteCompletedItems(list)
         tableView.reloadData()
     }
     
@@ -35,7 +37,7 @@ class ListController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         if let text = textField.text {
-            listItemsStore.createListItem(text)
+            listStore.createListItem(list, text: text)
             
             textField.text = ""
             tableView.reloadData()
@@ -70,7 +72,7 @@ class ListController: UIViewController, UITableViewDataSource, UITableViewDelega
             // Move item with pretty animations in the table
             tableView.moveRowAtIndexPath(indexPathToMove!, toIndexPath: indexPath!)
             // Ensure order will be persisted
-            swap(&listItemsStore.allListItems[indexPathToMove!.row], &listItemsStore.allListItems[indexPath!.row])
+            swap(&list.items[indexPathToMove!.row], &list.items[indexPath!.row])
             
             indexPathToMove = indexPath!
             break
@@ -88,13 +90,13 @@ class ListController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return listItemsStore.allListItems.count
+        return list.items.count
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("ListItemCell") as! ListItemTableViewCell
         
-        let listItem = listItemsStore.allListItems[indexPath.row]
+        let listItem = list.items[indexPath.row]
         
         let attributeString: NSMutableAttributedString =  NSMutableAttributedString(string: listItem.itemDescription)
         
@@ -122,8 +124,8 @@ class ListController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
-            let listItem = listItemsStore.allListItems[indexPath.row]
-            listItemsStore.deleteListItem(listItem)
+            let listItem = list.items[indexPath.row]
+            listStore.deleteListItem(list, item: listItem)
             self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
         }
     }
@@ -131,7 +133,7 @@ class ListController: UIViewController, UITableViewDataSource, UITableViewDelega
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
         let cell = tableView.cellForRowAtIndexPath(indexPath) as! ListItemTableViewCell
-        let listItem = listItemsStore.allListItems[indexPath.row]
+        let listItem = list.items[indexPath.row]
         let attributedText = cell.textLabel?.attributedText as! NSMutableAttributedString
         
         // Toggle strikethrough and completed attribute
